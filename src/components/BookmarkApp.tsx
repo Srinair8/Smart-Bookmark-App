@@ -101,9 +101,19 @@ const handleDelete = async (id: string) => {
 
   // ── Sign out ──────────────────────────────────────────
   const handleSignOut = async () => {
+    if (!confirm('Are you sure you want to sign out?')) {
+      return
+    }
+    
+    toast.success('Signed out successfully!')
     await supabase.auth.signOut()
-    window.location.reload()
+    
+    // Delay reload slightly so user sees the toast
+    setTimeout(() => {
+      window.location.reload()
+    }, 500)
   }
+
 // ── Filter bookmarks ──────────────────────────────────
   const filteredBookmarks = bookmarks.filter(bm =>
     bm.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -119,8 +129,10 @@ const handleDelete = async (id: string) => {
           <p className="text-sm text-gray-500">{user.email}</p>
         </div>
         <button onClick={handleSignOut}
-          className="text-sm text-gray-500 hover:text-red-500 transition-colors">
-          Sign out
+          className="px-4 py-2 text-sm text-red-600 hover:bg-red-50 
+            rounded-lg border border-red-200 hover:border-red-300 
+            transition-colors font-medium">
+          Sign Out
         </button>
       </div>
 
