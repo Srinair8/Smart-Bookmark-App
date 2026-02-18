@@ -1,18 +1,28 @@
 'use client'
 import { createClient } from '@/lib/supabase/client'
- 
+
 export default function LoginButton() {
   const supabase = createClient()
- 
+
   const handleLogin = async () => {
+    // Get the current URL (works on both localhost and Vercel)
+    const currentUrl = window.location.origin
+    const redirectUrl = `${currentUrl}/auth/callback`
+    
+    console.log('🔗 Redirecting to:', redirectUrl) // Debug log
+    
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: redirectUrl,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent', // Force fresh consent - ignores old cached redirects
+        },
       },
     })
   }
- 
+
   return (
     <button
       onClick={handleLogin}
