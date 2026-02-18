@@ -21,7 +21,7 @@ A modern, real-time bookmark manager built with Next.js, Supabase, and Tailwind 
 
 ## 🚀 Live Demo
 
-[View Live App](https://your-app-url.vercel.app) <!-- Replace with your actual Vercel URL -->
+[View Live App](https://smart-bookmark-app-mu-woad.vercel.app/) 
 
 ## 🛠️ Tech Stack
 
@@ -44,23 +44,17 @@ Before running this project, make sure you have:
 
 ### 1. Clone the Repository
 
-```bash
-git clone https://github.com/YOUR_USERNAME/smart-bookmarks.git
-cd smart-bookmarks
-```
+git clone repository_url
 
 ### 2. Install Dependencies
 
-```bash
 npm install
-```
 
 ### 3. Set Up Supabase
 
 1. Create a new project at [supabase.com](https://supabase.com)
 2. Go to **SQL Editor** and run this SQL:
 
-```sql
 -- Create bookmarks table
 CREATE TABLE bookmarks (
   id          UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -89,7 +83,6 @@ CREATE POLICY "Users can delete own bookmarks"
 -- Enable Realtime
 ALTER TABLE bookmarks REPLICA IDENTITY FULL;
 ALTER PUBLICATION supabase_realtime ADD TABLE bookmarks;
-```
 
 3. Go to **Authentication > URL Configuration**:
    - Set **Site URL** to `http://localhost:3000` (for development)
@@ -105,13 +98,9 @@ ALTER PUBLICATION supabase_realtime ADD TABLE bookmarks;
 4. Fill in app name and email
 5. Go to **Credentials > Create Credentials > OAuth client ID**
 6. Add authorized redirect URI:
-   ```
    https://YOUR_SUPABASE_REF.supabase.co/auth/v1/callback
-   ```
 7. Add authorized JavaScript origin:
-   ```
    http://localhost:3000
-   ```
 8. Copy the **Client ID** and **Client Secret**
 
 9. In Supabase Dashboard:
@@ -124,18 +113,14 @@ ALTER PUBLICATION supabase_realtime ADD TABLE bookmarks;
 
 Create a `.env.local` file in the root directory:
 
-```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
 
 Get these values from **Supabase Dashboard > Settings > API**
 
 ### 6. Run Development Server
 
-```bash
 npm run dev
-```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
@@ -165,8 +150,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## 📁 Project Structure
 
-```
-smart-bookmarks/
+Smart-Bookmark-App/
 ├── src/
 │   ├── app/
 │   │   ├── auth/
@@ -186,7 +170,6 @@ smart-bookmarks/
 ├── next.config.mjs
 ├── tailwind.config.ts
 └── package.json
-```
 
 ## 🔑 Key Features Explained
 
