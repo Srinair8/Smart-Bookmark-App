@@ -47,7 +47,13 @@ export default function BookmarkApp({ user }: { user: User }) {
         },
         (payload) => {
           if (payload.eventType === 'INSERT') {
-            setBookmarks(prev => [payload.new as Bookmark, ...prev])
+            const newBookmark = payload.new as Bookmark
+            // Only add if it doesn't already exist (prevents duplicates from optimistic updates)
+            setBookmarks(prev => {
+              const exists = prev.some(b => b.id === newBookmark.id)
+              if (exists) return prev // Already have it, skip
+              return [newBookmark, ...prev]
+            })
           } else if (payload.eventType === 'DELETE') {
             setBookmarks(prev => prev.filter(b => b.id !== payload.old.id))
           }
@@ -62,16 +68,48 @@ export default function BookmarkApp({ user }: { user: User }) {
     e.preventDefault()
     if (!title.trim() || !url.trim()) return
     setAdding(true)
+    
     const fullUrl = url.startsWith('http') ? url : `https://${url}`
-    await supabase.from('bookmarks').insert({
+    
+    // Create a temporary bookmark object
+    const tempBookmark: Bookmark = {
+      id: `temp-${Date.now()}`, // Temporary ID
       title: title.trim(),
       url: fullUrl,
-      user_id: user.id,
-    })
+      created_at: new Date().toISOString(),
+    }
+    
+    // Add to UI immediately (optimistic update)
+    setBookmarks(prev => [tempBookmark, ...prev])
+    
+    // Clear form
     setTitle('')
     setUrl('')
+    
+    // Then save to database
+    const { data, error } = await supabase
+      .from('bookmarks')
+      .insert({
+        title: tempBookmark.title,
+        url: tempBookmark.url,
+        user_id: user.id,
+      })
+      .select()
+      .single()
+    
+    if (error) {
+      // If save failed, remove the temp bookmark
+      setBookmarks(prev => prev.filter(b => b.id !== tempBookmark.id))
+      toast.error('Failed to add bookmark')
+    } else {
+      // Replace temp bookmark with real one from database
+      setBookmarks(prev => 
+        prev.map(b => b.id === tempBookmark.id ? data : b)
+      )
+      toast.success('Bookmark added!')
+    }
+    
     setAdding(false)
-    toast.success('Bookmark added!')
   }
 
   // ── Delete bookmark ───────────────────────────────────
